@@ -294,6 +294,15 @@
   line-height: 40px;
 }
 
+.unselect-text {
+  color: #BFC8CD;
+  font-family: Bahnschrift;
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 30px;
+  text-decoration: underline 1px solid #BFC8CD;
+}
+
 .product-sub-field-container {
   display: flex;
   flex-direction: column;

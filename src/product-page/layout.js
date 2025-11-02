@@ -198,6 +198,7 @@ export default function ProductPage({ children }) {
                 <p className="product-filter-selected">All</p>
                 {clickProductFilterBtn ? (
                   <ul className="product-sub-field-container">
+                    <p className="unselect-text">Unselect all</p>
                     {subFilterItems.map((eachSubItems) => (
                       <li key={eachSubItems.id} className="list-sub-field-container">
                         <input
