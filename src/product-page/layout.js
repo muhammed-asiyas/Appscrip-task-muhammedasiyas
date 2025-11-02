@@ -116,18 +116,30 @@ const productFilterItems = [
   { id: 8, item: "PATTERN" },
 ];
 
+const subFilterItems = [
+  { id: 1, item: "Men" },
+  { id: 2, item: "Women" },
+  { id: 3, item: "Baby & Kids" },
+];
+
 export default function ProductPage({ children }) {
   const [clickFilterBtn, setClickFilterBtn] = useState(false);
   const onClickFilterBtn = () => setClickFilterBtn((prevState) => !prevState);
+  const [clickProductFilterBtn, setClickProductFilterBtn] = useState(false);
+  const onClickProductFilterBtn = () =>
+    setClickProductFilterBtn((prevState) => !prevState);
   const FilterBtnText = clickFilterBtn ? "HIDE FILTER" : "SHOW FILTER";
   const FilterArrow = clickFilterBtn ? RiArrowLeftSLine : RiArrowRightSLine;
+  const ProductFilterArrow = clickProductFilterBtn
+    ? RiArrowUpSLine
+    : RiArrowDownSLine;
   return (
     <div className="product-page-container">
       <ul className="filter-container">
         <li className="hide-and-count-items-container">
           <h1 className="items-count">3425 ITEMS</h1>
           <button
-            className="hide-and-show-filter-btn"
+            className="filter-btn"
             type="button"
             onClick={onClickFilterBtn}
           >
@@ -175,9 +187,31 @@ export default function ProductPage({ children }) {
               <li key={eachFilters.id}>
                 <div className="product-filter-first-row-container">
                   <h3 className="product-filter-head">{eachFilters.item}</h3>
-                  <RiArrowDownSLine className="filter-arrow-btn" />
+                  <button
+                    className="filter-btn"
+                    type="button"
+                    onClick={onClickProductFilterBtn}
+                  >
+                    <ProductFilterArrow className="filter-arrow-btn" />
+                  </button>
                 </div>
                 <p className="product-filter-selected">All</p>
+                {clickProductFilterBtn ? (
+                  <ul className="product-sub-field-container">
+                    {subFilterItems.map((eachSubItems) => (
+                      <li key={eachSubItems.id} className="list-sub-field-container">
+                        <input
+                          className="checkbox"
+                          type="checkbox"
+                          name="product-category"
+                        />
+                        <h5 className="sub-category-filter-name">
+                          {eachSubItems.item}
+                        </h5>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
                 <hr className="hr-line-filter" />
               </li>
             ))}

@@ -84,7 +84,7 @@
   color: #000000;
 }
 
-.hide-and-show-filter-btn {
+.filter-btn {
   display: flex;
   align-items: center;
   background-color: transparent;
@@ -294,6 +294,27 @@
   line-height: 40px;
 }
 
+.product-sub-field-container {
+  display: flex;
+  flex-direction: column;
+  padding: 0px;
+  list-style-type: none;
+}
+
+.list-sub-field-container {
+  display: flex;
+  align-items: center;
+ 
+}
+
+.sub-category-filter-name {
+  color: #292828;
+  font-family: Bahnschrift;
+  font-weight: 300;
+  font-size: 15px;
+  margin-left: 10px;
+  line-height: 34px;
+}
 
 
 
