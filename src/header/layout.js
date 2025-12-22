@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import "./index.css";
 import { FiMenu } from "react-icons/fi";
 
@@ -10,11 +13,31 @@ const navItem = [
 ];
 
 export default function Header({ children }) {
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+
+  const onToggleMobileMenu = () => {
+    setShowMobileMenu((prev) => !prev);
+  };
+
   return (
     <div className="header-container">
       <ul className="website-logo-container-sm">
+        {showMobileMenu && (
+  <>
+    <div className="mobile-menu-overlay" onClick={onToggleMobileMenu}></div>
+
+    <ul className="mobile-nav-container">
+      {navItem.map((eachNav) => (
+        <li key={eachNav.id} className="mobile-nav-item">
+          {eachNav.name}
+        </li>
+      ))}
+    </ul>
+  </>
+)}
+
         <li className="nav-items-sm-container">
-          <FiMenu className="fi-menu-sm" />
+          <FiMenu className="fi-menu-sm" onClick={onToggleMobileMenu} />
           <img
             className="website-logo-sm"
             src="https://res.cloudinary.com/dlhgbo0ji/image/upload/v1761918524/Logo_anzpbp.png"

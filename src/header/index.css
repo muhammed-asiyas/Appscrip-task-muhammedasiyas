@@ -131,3 +131,60 @@
 .website-logo-sm {
   width: 24px;
 }
+
+/* Mobile Nav Overlay */
+.mobile-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 20;
+}
+
+/* Mobile Nav Menu */
+.mobile-nav-container {
+  position: fixed;
+  top: 80px;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  z-index: 30;
+  list-style-type: none;
+  padding: 20px 0;
+  animation: slideDown 0.3s ease-in-out;
+  border-top: 1px solid #e5e5e5;
+}
+
+/* Nav Items */
+.mobile-nav-item {
+  padding: 16px 24px;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: Bahnschrift;
+  color: #000;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+}
+
+.mobile-nav-item:hover {
+  background-color: #f7f7f7;
+}
+
+/* Animation */
+@keyframes slideDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Desktop hide */
+@media screen and (min-width: 768px) {
+  .mobile-nav-container,
+  .mobile-menu-overlay {
+    display: none;
+  }
+}

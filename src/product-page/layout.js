@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from 'axios';
 import {
   RiArrowLeftSLine,
   RiArrowRightSLine,
@@ -16,93 +17,6 @@ const recommendedFilterItems = [
   { id: 3, item: "POPULAR" },
   { id: 4, item: "PRICE: HIGH TO LOW" },
   { id: 5, item: "PRICE: LOW TO HIGH" },
-];
-
-const productItems = [
-  {
-    id: 1,
-    imgUrl:
-      "https://res.cloudinary.com/dlhgbo0ji/image/upload/v1762010985/Image_q4pvot.png",
-    altText: "bag",
-    name: "PRODUCT NAME",
-  },
-  {
-    id: 2,
-    imgUrl:
-      "https://res.cloudinary.com/dlhgbo0ji/image/upload/v1762011028/Image_zkb7mr.png",
-    altText: "toy",
-    name: "PRODUCT NAME",
-  },
-  {
-    id: 3,
-    imgUrl:
-      "https://res.cloudinary.com/dlhgbo0ji/image/upload/v1762011069/Rectangle_29438_zg62l8.png",
-    altText: "keychain",
-    name: "PRODUCT NAME",
-  },
-  {
-    id: 4,
-    imgUrl:
-      "https://res.cloudinary.com/dlhgbo0ji/image/upload/v1762011115/Rectangle_29438_vqr6eg.png",
-    altText: "cap",
-    name: "PRODUCT NAME",
-  },
-  {
-    id: 5,
-    imgUrl:
-      "https://res.cloudinary.com/dlhgbo0ji/image/upload/v1762011153/Rectangle_29438_om1o2r.png",
-    altText: "bag",
-    name: "PRODUCT NAME",
-  },
-  {
-    id: 6,
-    imgUrl:
-      "https://res.cloudinary.com/dlhgbo0ji/image/upload/v1762011187/Rectangle_29438_x48lpm.png",
-    altText: "toys",
-    name: "PRODUCT NAME",
-  },
-  {
-    id: 7,
-    imgUrl:
-      "https://res.cloudinary.com/dlhgbo0ji/image/upload/v1762011223/Rectangle_29438_pcfego.png",
-    altText: "bag",
-    name: "PRODUCT NAME",
-  },
-  {
-    id: 8,
-    imgUrl:
-      "https://res.cloudinary.com/dlhgbo0ji/image/upload/v1762011254/Rectangle_29438_lanvry.png",
-    altText: "bag",
-    name: "PRODUCT NAME",
-  },
-  {
-    id: 9,
-    imgUrl:
-      "https://res.cloudinary.com/dlhgbo0ji/image/upload/v1762011300/Rectangle_29438_ic0vs4.png",
-    altText: "bag",
-    name: "PRODUCT NAME",
-  },
-  {
-    id: 10,
-    imgUrl:
-      "https://res.cloudinary.com/dlhgbo0ji/image/upload/v1762011357/Rectangle_29438_ddawkp.png",
-    altText: "small bag",
-    name: "PRODUCT NAME",
-  },
-  {
-    id: 11,
-    imgUrl:
-      "https://res.cloudinary.com/dlhgbo0ji/image/upload/v1762011390/Rectangle_29438_ieeguh.png",
-    altText: "women bag",
-    name: "PRODUCT NAME",
-  },
-  {
-    id: 12,
-    imgUrl:
-      "https://res.cloudinary.com/dlhgbo0ji/image/upload/v1762011427/Rectangle_29438_slgrfl.png",
-    altText: "womwn bag",
-    name: "PRODUCT NAME",
-  },
 ];
 
 const productFilterItems = [
@@ -123,16 +37,45 @@ const subFilterItems = [
 ];
 
 export default function ProductPage({ children }) {
+  const [products, setProducts] = useState([]);
   const [clickFilterBtn, setClickFilterBtn] = useState(false);
+  const [openFilters, setOpenFilters] = useState({});
+  const [showRecommendedPopup, setShowRecommendedPopup] = useState(false);
+  const [selectedRecommended, setSelectedRecommended] = useState("RECOMMENDED");
+  const [likedProducts, setLikedProducts] = useState([]);
+  console.log(products)
+  
+useEffect(() => {
+    axios
+      .get("https://fakestoreapi.com/products")
+      .then((response) => setProducts(response.data))
+      .catch((error) => console.error("API error:", error));
+  }, []);
+
   const onClickFilterBtn = () => setClickFilterBtn((prevState) => !prevState);
-  const [clickProductFilterBtn, setClickProductFilterBtn] = useState(false);
-  const onClickProductFilterBtn = () =>
-    setClickProductFilterBtn((prevState) => !prevState);
+  const onToggleProductFilter = (id) => {
+    setOpenFilters((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
   const FilterBtnText = clickFilterBtn ? "HIDE FILTER" : "SHOW FILTER";
   const FilterArrow = clickFilterBtn ? RiArrowLeftSLine : RiArrowRightSLine;
-  const ProductFilterArrow = clickProductFilterBtn
-    ? RiArrowUpSLine
-    : RiArrowDownSLine;
+  const onToggleRecommendedPopup = () => {
+    setShowRecommendedPopup((prev) => !prev);
+  };
+
+  const onSelectRecommended = (item) => {
+    setSelectedRecommended(item);
+    setShowRecommendedPopup(false);
+  };
+
+  const onToggleLike = (id) => {
+    setLikedProducts((prev) =>
+      prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]
+    );
+  };
+
   return (
     <div className="product-page-container">
       <ul className="filter-container">
@@ -157,17 +100,42 @@ export default function ProductPage({ children }) {
           </button>
         </li>
         <div className="vertical-line-sm"></div>
-        <select className="recommended-select-container">
-          {recommendedFilterItems.map((eachFilters) => (
-            <option
-              className="recommended-filter-options-box"
-              key={eachFilters.id}
-              value={eachFilters.item}
-            >
-              {eachFilters.item}
-            </option>
-          ))}
-        </select>
+
+        <div className="recommended-container">
+          <button
+            type="button"
+            className="recommended-btn"
+            onClick={onToggleRecommendedPopup}
+          >
+            {selectedRecommended}
+            <RiArrowDownSLine className="recommended-arrow" />
+          </button>
+
+          {showRecommendedPopup && (
+            <>
+              
+              <div
+                className="popup-overlay"
+                onClick={onToggleRecommendedPopup}
+              ></div>
+
+              
+              <ul className="recommended-popup">
+                {recommendedFilterItems.map((eachItem) => (
+                  <li
+                    key={eachItem.id}
+                    className={`recommended-popup-item ${
+                      selectedRecommended === eachItem.item ? "active" : ""
+                    }`}
+                    onClick={() => onSelectRecommended(eachItem.item)}
+                  >
+                    {eachItem.item}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
       </ul>
       <div className="product-and-filter-container">
         {clickFilterBtn ? (
@@ -183,50 +151,62 @@ export default function ProductPage({ children }) {
               </label>
             </div>
             <hr className="hr-line-filter" />
-            {productFilterItems.map((eachFilters) => (
-              <li key={eachFilters.id}>
-                <div className="product-filter-first-row-container">
-                  <h3 className="product-filter-head">{eachFilters.item}</h3>
-                  <button
-                    className="filter-btn"
-                    type="button"
-                    onClick={onClickProductFilterBtn}
-                  >
-                    <ProductFilterArrow className="filter-arrow-btn" />
-                  </button>
-                </div>
-                <p className="product-filter-selected">All</p>
-                {clickProductFilterBtn ? (
-                  <ul className="product-sub-field-container">
-                    <p className="unselect-text">Unselect all</p>
-                    {subFilterItems.map((eachSubItems) => (
-                      <li key={eachSubItems.id} className="list-sub-field-container">
-                        <input
-                          className="checkbox"
-                          type="checkbox"
-                          name="product-category"
-                        />
-                        <h5 className="sub-category-filter-name">
-                          {eachSubItems.item}
-                        </h5>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-                <hr className="hr-line-filter" />
-              </li>
-            ))}
+            {productFilterItems.map((eachFilters) => {
+              const isOpen = openFilters[eachFilters.id];
+              const ArrowIcon = isOpen ? RiArrowUpSLine : RiArrowDownSLine;
+
+              return (
+                <li key={eachFilters.id}>
+                  <div className="product-filter-first-row-container">
+                    <h3 className="product-filter-head">{eachFilters.item}</h3>
+                    <button
+                      className="filter-btn"
+                      type="button"
+                      onClick={() => onToggleProductFilter(eachFilters.id)}
+                    >
+                      <ArrowIcon className="filter-arrow-btn" />
+                    </button>
+                  </div>
+
+                  <p className="product-filter-selected">All</p>
+
+                  {isOpen && (
+                    <ul className="product-sub-field-container">
+                      <p className="unselect-text">Unselect all</p>
+                      {subFilterItems.map((eachSubItems) => (
+                        <li
+                          key={eachSubItems.id}
+                          className="list-sub-field-container"
+                        >
+                          <input
+                            className="filter-checkbox"
+                            type="checkbox"
+                            name="product-category"
+                          />
+                          <h5 className="sub-category-filter-name">
+                            {eachSubItems.item}
+                          </h5>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  <hr className="hr-line-filter" />
+                </li>
+              );
+            })}
           </ul>
         ) : null}
         <ul className="product-list-item-container">
-          {productItems.map((eachProducts) => (
+          {products.map((eachProducts) => (
             <li className="product-items" key={eachProducts.id}>
               <img
                 className="product-image"
-                src={eachProducts.imgUrl}
-                alt={eachProducts.altText}
+                src={eachProducts.image}
+                alt={eachProducts.title}
               />
-              <h4 className="product-name">{eachProducts.name}</h4>
+              <h4 className="product-name">{eachProducts.title}</h4>
+              <h2 className="product-price">₹{eachProducts.price}</h2>
               <div className="description-product-container">
                 <p className="product-description">
                   {" "}
@@ -235,7 +215,15 @@ export default function ProductPage({ children }) {
                   </span>{" "}
                   or Create an account to see pricing
                 </p>
-                <RiPokerHeartsLine className="heart-icon" />
+                <button
+                  type="button"
+                  className={`heart-btn ${
+                    likedProducts.includes(eachProducts.id) ? "liked" : ""
+                  }`}
+                  onClick={() => onToggleLike(eachProducts.id)}
+                >
+                  <RiPokerHeartsLine className="heart-icon" />
+                </button>
               </div>
             </li>
           ))}
